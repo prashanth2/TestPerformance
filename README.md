@@ -32,4 +32,27 @@ c:\test\test.ps1 -tag vm_mtu1440
 c:\test\docker-compose.exe up -d
 docker exec -it test_webapp_1 powershell -Command "c:\test\test.ps1 -tag container_mtu1440"
 c:\test\docker-compose.exe down
+Get-NetIPInterface -AddressFamily IPv4 -NlMtuBytes 1440 | Set-NetIPInterface -NlMtuBytes 1500
+Get-NetIPInterface -AddressFamily IPv4
+Restart-Computer
+```
+
+## Repro setting MTU=1440, PortChunkSize=100
+```
+Get-NetIPInterface -AddressFamily IPv4 -NlMtuBytes 1500 | Set-NetIPInterface -NlMtuBytes 1440
+Get-NetIPInterface -AddressFamily IPv4
+Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\WinNat -Name PortChunkSize -Value 100
+Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\WinNat -Name PortChunkSize
+Restart-Computer
+powershell
+Get-NetIPInterface -AddressFamily IPv4
+c:\test\test.ps1 -tag vm_mtu1440_portchunk100
+c:\test\docker-compose.exe up -d
+docker exec -it test_webapp_1 powershell -Command "c:\test\test.ps1 -tag container_mtu1440_portchunk100"
+c:\test\docker-compose.exe down
+Get-NetIPInterface -AddressFamily IPv4 -NlMtuBytes 1440 | Set-NetIPInterface -NlMtuBytes 1500
+Get-NetIPInterface -AddressFamily IPv4
+Remove-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\WinNat -Name PortChunkSize
+Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\WinNat -Name PortChunkSize
+Restart-Computer
 ```
