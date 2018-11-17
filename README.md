@@ -46,6 +46,7 @@ Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\WinNat -Name Port
 Restart-Computer
 powershell
 Get-NetIPInterface -AddressFamily IPv4
+Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\WinNat -Name PortChunkSize
 c:\test\test.ps1 -tag vm_mtu1440_portchunk100
 c:\test\docker-compose.exe up -d
 docker exec -it test_webapp_1 powershell -Command "c:\test\test.ps1 -tag container_mtu1440_portchunk100"
