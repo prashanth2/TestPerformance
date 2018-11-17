@@ -1,7 +1,10 @@
 ﻿# Introduction
-A 4.7.2 .NET web application with EntityFramework 6.2.0 running on-premise completes http requests in less than 1.2 seconds. 
-The same application deployed to azure using Service Fabric Windows 1803 with Containers and azure sql database premium, the performance drops to some requests completing in less than 4 seconds, others under 30 seconds, and a few under 90 seconds.
-Looking through the logs, we see errors and delays opening sql connections and running sql queries.
+A 4.7.2 .NET web application with EntityFramework 6.2.0 and SqlAzureExecutionStrategy running on-premise completes http requests in less than 1.2 seconds. The same application deployed to azure Service Fabric Windows 1803 with Containers and azure sql database premium, the performance drops as some requests complete in less than 4 seconds, others under 30 seconds, and a few under 90 seconds. Looking through the application logs, we see errors, retries, and delays opening sql connections and running sql queries.
+
+## About the repro test utilities
+* TestEntityFramework472 creates the database schema, tables, and rows
+* TestSqlDatabase472 opens sql connections and execute queries without a retry strategy. It is expected that every operation completes or fails in less than 1 second. Otherwise, the retry strategy will add compund delays and a simple operation that usually completes in less than 10 milliseconds would complete in a worst scenario of 2 minutes and 30 seconds.
+* TestHttpPerformance472 is used to measure the performance of the full application, not included in this repository.
 
 ## Repro in a machine just created
 ```
